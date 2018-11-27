@@ -1,45 +1,48 @@
 body 
 { 
-	background-color: White;
-    font-family: sans-serif;
+	
+}
+
+body * {
+	box-sizing: border-box;
 }
 
 .wmd-panel
 {
-	margin-left: 25%;
-	margin-right: 25%;
-	width: 50%;
-	min-width: 500px;
+	font-size: 0;
 }
 
 .wmd-button-bar 
 {
 	width: 100%;
-	background-color: Silver; 
+	background-color: #222222;
+	padding: 5px;
 }
 
 .wmd-input 
 { 
-	height: 300px;
-	width: 100%;
-	background-color: Gainsboro;
-	border: 1px solid DarkGray;
+	min-height: 300px;
+	border: none;
+	resize: none;
+	width: 50%;
 }
 
 .wmd-preview 
-{ 
-	background-color: #c0e0ff; 
+{
+	font-size: 12pt;
+	display: inline-block;
+	background-color: #eeeeee;
+	min-height: 300px;
+	width: 50%;
+	vertical-align: top;
 }
 
 .wmd-button-row 
 {
-	position: relative; 
-	margin-left: 5px;
-	margin-right: 5px;
-	margin-bottom: 5px;
-	margin-top: 10px;
-	padding: 0px;  
+	position: relative;
+	padding: 0px;
 	height: 20px;
+	margin: 0;
 }
 
 .wmd-spacer
