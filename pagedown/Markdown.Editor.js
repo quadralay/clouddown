@@ -124,6 +124,7 @@
             panels = new PanelCollection(idPostfix);
             var commandManager = new CommandManager(hooks, getString);
             var previewManager = new PreviewManager(markdownConverter, panels, function () { hooks.onPreviewRefresh(); });
+            this.previewManager = previewManager;
             var undoManager, uiManager;
 
             if (!/\?noundo/.test(doc.location.href)) {
@@ -1438,14 +1439,17 @@
             buttonRow.className = 'wmd-button-row';
             buttonRow = buttonBar.appendChild(buttonRow);
             var xPosition = 0;
-            var makeButton = function (id, title, XShift, textOp) {
+            var makeButton = function (id, iconClass, title, XShift, textOp) {
                 var button = document.createElement("li");
                 button.className = "wmd-button";
                 button.style.left = xPosition + "px";
                 xPosition += 25;
-                var buttonImage = document.createElement("span");
+                var buttonSpan = document.createElement("span");
                 button.id = id + postfix;
-                button.appendChild(buttonImage);
+                var buttonIcon = document.createElement("i");
+                buttonIcon.className = "wmd-button-icon fa " + iconClass;
+                buttonSpan.appendChild(buttonIcon);
+                button.appendChild(buttonSpan);
                 button.title = title;
                 button.XShift = XShift;
                 if (textOp)
@@ -1462,35 +1466,50 @@
                 xPosition += 25;
             }
 
-            buttons.bold = makeButton("wmd-bold-button", getString("bold"), "0px", bindCommand("doBold"));
-            buttons.italic = makeButton("wmd-italic-button", getString("italic"), "-20px", bindCommand("doItalic"));
+            // button font-awesome icons
+            var boldIcon = "fa-bold";
+            var italicIcon = "fa-italic";
+            var linkIcon = "fa-link";
+            var quoteIcon = "fa-quote-right";
+            var codeIcon = "fa-code";
+            var imageIcon = "fa-image";
+            var olistIcon = "fa-list-ol";
+            var ulistIcon = "fa-list-ul";
+            var headingIcon = "fa-header";
+            var hrIcon = "fa-pied-piper-alt";
+            var undoIcon = "fa-arrow-left";
+            var redoIcon = "fa-arrow-right";
+            var helpIcon = "fa-question";
+
+            buttons.bold = makeButton("wmd-bold-button", boldIcon, getString("bold"), "0px", bindCommand("doBold"));
+            buttons.italic = makeButton("wmd-italic-button", italicIcon, getString("italic"), "-20px", bindCommand("doItalic"));
             makeSpacer(1);
-            buttons.link = makeButton("wmd-link-button", getString("link"), "-40px", bindCommand(function (chunk, postProcessing) {
+            buttons.link = makeButton("wmd-link-button", linkIcon, getString("link"), "-40px", bindCommand(function (chunk, postProcessing) {
                 return this.doLinkOrImage(chunk, postProcessing, false);
             }));
-            buttons.quote = makeButton("wmd-quote-button", getString("quote"), "-60px", bindCommand("doBlockquote"));
-            buttons.code = makeButton("wmd-code-button", getString("code"), "-80px", bindCommand("doCode"));
-            buttons.image = makeButton("wmd-image-button", getString("image"), "-100px", bindCommand(function (chunk, postProcessing) {
+            buttons.quote = makeButton("wmd-quote-button", quoteIcon, getString("quote"), "-60px", bindCommand("doBlockquote"));
+            buttons.code = makeButton("wmd-code-button", codeIcon, getString("code"), "-80px", bindCommand("doCode"));
+            buttons.image = makeButton("wmd-image-button", imageIcon, getString("image"), "-100px", bindCommand(function (chunk, postProcessing) {
                 return this.doLinkOrImage(chunk, postProcessing, true);
             }));
             makeSpacer(2);
-            buttons.olist = makeButton("wmd-olist-button", getString("olist"), "-120px", bindCommand(function (chunk, postProcessing) {
+            buttons.olist = makeButton("wmd-olist-button", olistIcon, getString("olist"), "-120px", bindCommand(function (chunk, postProcessing) {
                 this.doList(chunk, postProcessing, true);
             }));
-            buttons.ulist = makeButton("wmd-ulist-button", getString("ulist"), "-140px", bindCommand(function (chunk, postProcessing) {
+            buttons.ulist = makeButton("wmd-ulist-button", ulistIcon, getString("ulist"), "-140px", bindCommand(function (chunk, postProcessing) {
                 this.doList(chunk, postProcessing, false);
             }));
-            buttons.heading = makeButton("wmd-heading-button", getString("heading"), "-160px", bindCommand("doHeading"));
-            buttons.hr = makeButton("wmd-hr-button", getString("hr"), "-180px", bindCommand("doHorizontalRule"));
+            buttons.heading = makeButton("wmd-heading-button", headingIcon, getString("heading"), "-160px", bindCommand("doHeading"));
+            buttons.hr = makeButton("wmd-hr-button", hrIcon, getString("hr"), "-180px", bindCommand("doHorizontalRule"));
             makeSpacer(3);
-            buttons.undo = makeButton("wmd-undo-button", getString("undo"), "-200px", null);
+            buttons.undo = makeButton("wmd-undo-button", undoIcon, getString("undo"), "-200px", null);
             buttons.undo.execute = function (manager) { if (manager) manager.undo(); };
 
             var redoTitle = /win/.test(nav.platform.toLowerCase()) ?
                 getString("redo") :
                 getString("redomac"); // mac and other non-Windows platforms
 
-            buttons.redo = makeButton("wmd-redo-button", redoTitle, "-220px", null);
+            buttons.redo = makeButton("wmd-redo-button", redoIcon, redoTitle, "-220px", null);
             buttons.redo.execute = function (manager) { if (manager) manager.redo(); };
 
             if (helpOptions) {

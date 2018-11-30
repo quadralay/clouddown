@@ -19,12 +19,15 @@ body * {
 	padding: 5px;
 }
 
-.wmd-input 
-{ 
+.cledit-container {
+	display: inline-block;
 	min-height: 300px;
-	border: none;
-	resize: none;
 	width: 50%;
+}
+
+.wmd-input
+{
+	display: none;
 }
 
 .wmd-preview 
@@ -69,12 +72,14 @@ body * {
 }
 
 .wmd-button > span {
-    background-image: url(wmd-buttons.png);
-    background-repeat: no-repeat;
-    background-position: 0px 0px;
-    width: 20px;
-    height: 20px;
     display: inline-block;
+}
+
+.wmd-button-icon {
+	width: 20px;
+  height: 20px;
+	color: white;
+	font-size: 16pt;
 }
 
 .wmd-spacer1
