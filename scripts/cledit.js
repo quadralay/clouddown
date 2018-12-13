@@ -1,7 +1,6 @@
-function cledit (contentElt, textElt, windowParam) {
+function cledit (contentElt, windowParam) {
     var editor = {
       $contentElt: contentElt,
-      $textElt: textElt,
       $window: windowParam || window,
       $keystrokes: [],
       $markers: {}
@@ -182,10 +181,7 @@ function cledit (contentElt, textElt, windowParam) {
       }
       ignoreUndo = false
       lastTextContent = newTextContent
-      // added
-      textElt.value = lastTextContent;
-      textElt.onchange();
-      // added
+      
       triggerSpellCheck()
     }
 

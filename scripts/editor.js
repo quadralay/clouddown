@@ -1,5 +1,5 @@
-function CloudDraftsEditor(input, fileContent, buttonBar, preview, onContentChanged) {
-  if (!input || !fileContent || !buttonBar || !preview) {
+function CloudDraftsEditor(input, buttonBar, preview, onContentChanged) {
+  if (!input || !buttonBar || !preview) {
     return {};
   }
 
@@ -7,22 +7,18 @@ function CloudDraftsEditor(input, fileContent, buttonBar, preview, onContentChan
 
   var elements = {
     input: input,
-    fileContent: fileContent,
     buttonBar: buttonBar,
     preview, preview
   }
 
-  //clouddraftsEditor.elements = elements;
-
   var cleditor = undefined;
-  var pagedownEditor = undefined;
+  var pagedown = undefined;
 
   function initCledit () {
     // Initialize cledit
     //
     cleditor = window.cledit(
-      elements.input,
-      elements.fileContent
+      elements.input
     )
 
     var prismGrammar = window.mdGrammar({
@@ -37,6 +33,8 @@ function CloudDraftsEditor(input, fileContent, buttonBar, preview, onContentChan
       sups: true,
       maths: true
     })
+
+    cleditor.on('contentChanged', onContentChanged);
 
     cleditor.init({
       sectionHighlighter: function (section) {
@@ -54,16 +52,16 @@ function CloudDraftsEditor(input, fileContent, buttonBar, preview, onContentChan
         return sectionList
       }
     })
+
+    elements.input = cleditor;
   }
 
   function initPagedown () {
     // Initialize pagedown
     //
-    pagedownEditor = new Pagedown({
-      input: Object.create(cleditor)
-    });
+    var converter = new Markdown.Converter();
 
-    /*converter.hooks.chain("preConversion", function (text) {
+    converter.hooks.chain("preConversion", function (text) {
       return text.replace(/\b(a\w*)/gi, "*$1*");
     });
 
@@ -72,7 +70,7 @@ function CloudDraftsEditor(input, fileContent, buttonBar, preview, onContentChan
     });
 
     // "all" is the default
-    Pagedown.Extra.init(converter, { highlighter: "prettify" });
+    Markdown.Extra.init(converter, { highlighter: "prettify" });
 
     var help = function () { alert("Do you need help?"); }
 
@@ -81,13 +79,13 @@ function CloudDraftsEditor(input, fileContent, buttonBar, preview, onContentChan
       strings: { quoteexample: "whatever you're quoting, put it right here" }
     };
 
-    pagedown = new Pagedown.Editor(converter, elements, options);
+    pagedown = new Markdown.Editor(converter, elements, options);
 
     pagedown.hooks.chain("onPreviewRefresh", prettyPrint); // google code prettify
 
-    pagedown.run();*/
+    pagedown.run();
 
-    pagedownEditor.run();
+    /*pagedownEditor.run();
     pagedownEditor.hooks.set('insertLinkDialog', function (callback) {
       store.dispatch('modal/open', {
         type: 'link',
@@ -101,21 +99,19 @@ function CloudDraftsEditor(input, fileContent, buttonBar, preview, onContentChan
         callback,
       });
       return true;
-    });
+    });*/
   }
 
   function init () {
-    var fileContent = elements.fileContent.value;
-    elements.input.innerHTML = fileContent;
     initCledit();
     initPagedown();
-    elements.fileContent.onchange = function () {
-      //pagedownEditor.refreshPreview();
-      onContentChanged();
-    };
   }
 
   init();
+  
+  clouddraftsEditor.getFileContent = function () {
+    return cleditor.getContent();
+  }
 
   return clouddraftsEditor;
 }
