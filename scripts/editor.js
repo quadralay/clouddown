@@ -1,9 +1,9 @@
-function CloudDraftsEditor(input, buttonBar, preview, onContentChanged) {
+function CloudDownEditor(input, buttonBar, preview, onContentChanged) {
   if (!input || !buttonBar || !preview) {
     return {};
   }
 
-  var clouddraftsEditor = {};
+  var clouddown = {};
 
   var elements = {
     input: input,
@@ -14,7 +14,7 @@ function CloudDraftsEditor(input, buttonBar, preview, onContentChanged) {
   var cleditor = undefined;
   var pagedown = undefined;
 
-  function initCledit () {
+  function initCledit() {
     // Initialize cledit
     //
     cleditor = window.cledit(
@@ -44,10 +44,10 @@ function CloudDraftsEditor(input, buttonBar, preview, onContentChanged) {
       sectionParser: function (text) {
         var offset = 0
         var sectionList = []
-        ;(text + '\n\n').replace(/^.+[ \t]*\n=+[ \t]*\n+|^.+[ \t]*\n-+[ \t]*\n+|^\#{1,6}[ \t]*.+?[ \t]*\#*\n+/gm, function (match, matchOffset) {
-          sectionList.push(text.substring(offset, matchOffset))
-          offset = matchOffset
-        })
+          ; (text + '\n\n').replace(/^.+[ \t]*\n=+[ \t]*\n+|^.+[ \t]*\n-+[ \t]*\n+|^\#{1,6}[ \t]*.+?[ \t]*\#*\n+/gm, function (match, matchOffset) {
+            sectionList.push(text.substring(offset, matchOffset))
+            offset = matchOffset
+          })
         sectionList.push(text.substring(offset))
         return sectionList
       }
@@ -56,14 +56,14 @@ function CloudDraftsEditor(input, buttonBar, preview, onContentChanged) {
     elements.input = cleditor;
   }
 
-  function initPagedown () {
+  function initPagedown() {
     // Initialize pagedown
     //
     var converter = new Markdown.Converter();
 
-    converter.hooks.chain("preConversion", function (text) {
-      return text.replace(/\b(a\w*)/gi, "*$1*");
-    });
+    //converter.hooks.chain("preConversion", function (text) {
+    //  return text.replace(/\b(a\w*)/gi, "*$1*");
+    //});
 
     converter.hooks.chain("plainLinkText", function (url) {
       return "This is a link to " + url.replace(/^https?:\/\//, "");
@@ -102,16 +102,16 @@ function CloudDraftsEditor(input, buttonBar, preview, onContentChanged) {
     });*/
   }
 
-  function init () {
+  function init() {
     initCledit();
     initPagedown();
   }
 
   init();
-  
-  clouddraftsEditor.getFileContent = function () {
+
+  clouddown.getFileContent = function () {
     return cleditor.getContent();
   }
 
-  return clouddraftsEditor;
+  return clouddown;
 }
