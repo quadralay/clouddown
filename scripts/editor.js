@@ -1,18 +1,55 @@
-function CloudDownEditor(input, buttonBar, preview, onContentChanged) {
-  if (!input || !buttonBar || !preview) {
+function CloudDownEditor(textArea, onContentChanged) {
+  if (!textArea) {
     return {};
   }
 
   var clouddown = {};
+  var fileContent = textArea.value;
 
-  var elements = {
-    input: input,
-    buttonBar: buttonBar,
-    preview, preview
-  }
+  var elements = {};
 
   var cleditor = undefined;
   var pagedown = undefined;
+
+  function createElements() {
+    // container
+    var container = document.createElement('div');
+    container.id = 'clouddown-panel';
+    container.class = 'clouddown-panel';
+
+    // button bar
+    var buttonBar = document.createElement('div');
+    buttonBar.id = 'clouddown-button-bar';
+    buttonBar.className = 'clouddown-button-bar';
+
+    // input container
+    var inputContainer = document.createElement('div');
+    inputContainer.className = 'clouddown-container';
+
+    // input
+    var input = document.createElement('pre');
+    input.id = 'clouddown-input';
+    input.className = 'clouddown-input';
+    input.innerText = fileContent;
+
+    // preview
+    var preview = document.createElement('div');
+    preview.id = 'clouddown-preview';
+    preview.className = 'clouddown-preview';
+
+    // assign to elements object
+    elements.input = input;
+    elements.buttonBar = buttonBar;
+    elements.preview = preview;
+
+    // append them to container
+    inputContainer.appendChild(input);
+    container.appendChild(buttonBar);
+    container.appendChild(inputContainer);
+    container.appendChild(preview);
+
+    textArea.parentNode.replaceChild(container, textArea);
+  }
 
   function initCledit() {
     // Initialize cledit
@@ -34,7 +71,9 @@ function CloudDownEditor(input, buttonBar, preview, onContentChanged) {
       maths: true
     })
 
-    cleditor.on('contentChanged', onContentChanged);
+    if (onContentChanged) {
+      cleditor.on('contentChanged', onContentChanged);
+    }
 
     cleditor.init({
       sectionHighlighter: function (section) {
@@ -72,10 +111,11 @@ function CloudDownEditor(input, buttonBar, preview, onContentChanged) {
     // "all" is the default
     Markdown.Extra.init(converter, { highlighter: "prettify" });
 
-    var help = function () { alert("Do you need help?"); }
+    //var help = function () { alert("Do you need help?"); }
 
     var options = {
-      helpButton: { handler: help },
+      //helpButton: { handler: help },
+      extensions: ["strikethrough"],
       strings: { quoteexample: "whatever you're quoting, put it right here" }
     };
 
@@ -103,6 +143,7 @@ function CloudDownEditor(input, buttonBar, preview, onContentChanged) {
   }
 
   function init() {
+    createElements();
     initCledit();
     initPagedown();
   }
@@ -111,6 +152,10 @@ function CloudDownEditor(input, buttonBar, preview, onContentChanged) {
 
   clouddown.getFileContent = function () {
     return cleditor.getContent();
+  }
+
+  clouddown.setFileContent = function (text) {
+    cleditor.setContent(text, true);
   }
 
   return clouddown;

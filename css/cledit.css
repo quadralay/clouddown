@@ -1,4 +1,4 @@
-.editor-input {
+.clouddown-input {
     color: rgba(0, 0, 0, 0.73);
     font-size: 18px;
     font-family: Helvetica, sans-serif;
@@ -8,7 +8,7 @@
     margin: 0;
 }
 
-* {
+.clouddown-input * {
     line-height: 1.5;
 }
 

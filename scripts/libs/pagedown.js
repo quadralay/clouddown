@@ -1420,38 +1420,41 @@ Markdown = {};
     };
 
   var defaultsStrings = {
-    bold: "Strong <strong> Ctrl+B",
-    boldexample: "strong text",
+    bold: "Bold Ctrl/Cmd+B",
+    boldexample: "bold text",
 
-    italic: "Emphasis <em> Ctrl+I",
-    italicexample: "emphasized text",
+    italic: "Italic Ctrl/Cmd+I",
+    italicexample: "italic text",
 
-    link: "Hyperlink <a> Ctrl+L",
+    strikethrough: "Strikethrough Ctrl/Cmd+I",
+    strikethroughexample: "strikethrough text",
+
+    link: "Hyperlink Ctrl/Cmd+L",
     linkdescription: "enter link description here",
-    linkdialog: "<p><b>Insert Hyperlink</b></p><p>http://example.com/ \"optional title\"</p>",
+    linkdialog: "<p><b>Insert Hyperlink</b></p><p>Enter the address of the link followed by a title.</p><p>Example:</p><pre><code>http://example.com \"optional title\"</code></pre>",
 
-    quote: "Blockquote <blockquote> Ctrl+Q",
+    quote: "Blockquote <blockquote> Ctrl/Cmd+Q",
     quoteexample: "Blockquote",
 
-    code: "Code Sample <pre><code> Ctrl+K",
+    code: "Code Sample <pre><code> Ctrl/Cmd+K",
     codeexample: "enter code here",
 
-    image: "Image <img> Ctrl+G",
+    image: "Image <img> Ctrl/Cmd+G",
     imagedescription: "enter image description here",
     imagedialog: "<p><b>Insert Image</b></p><p>http://example.com/images/diagram.jpg \"optional title\"<br><br>Need <a href='http://www.google.com/search?q=free+image+hosting' target='_blank'>free image hosting?</a></p>",
 
-    olist: "Numbered List <ol> Ctrl+O",
-    ulist: "Bulleted List <ul> Ctrl+U",
+    olist: "Numbered List <ol> Ctrl/Cmd+O",
+    ulist: "Bulleted List <ul> Ctrl/Cmd+U",
     litem: "List item",
 
-    heading: "Heading <h1>/<h2> Ctrl+H",
+    heading: "Heading <h1>/<h2> Ctrl/Cmd+H",
     headingexample: "Heading",
 
-    hr: "Horizontal Rule <hr> Ctrl+R",
+    hr: "Horizontal Rule <hr> Ctrl/Cmd+R",
 
-    undo: "Undo - Ctrl+Z",
-    redo: "Redo - Ctrl+Y",
-    redomac: "Redo - Ctrl+Shift+Z",
+    undo: "Undo - Ctrl/Cmd+Z",
+    redo: "Redo - Ctrl/Cmd+Y",
+    redomac: "Redo - Cmd+Shift+Z",
 
     help: "Markdown Editing Help"
   };
@@ -2844,20 +2847,7 @@ Markdown = {};
     };
 
     function setupButton(button, isEnabled) {
-
-      var normalYShift = "0px";
-      var disabledYShift = "-20px";
-      var highlightYShift = "-40px";
-      var image = button.getElementsByTagName("span")[0];
       if (isEnabled) {
-        image.style.backgroundPosition = button.XShift + " " + normalYShift;
-        button.onmouseover = function () {
-          image.style.backgroundPosition = this.XShift + " " + highlightYShift;
-        };
-
-        button.onmouseout = function () {
-          image.style.backgroundPosition = this.XShift + " " + normalYShift;
-        };
 
         // IE tries to select the background image "button" text (it's
         // implemented in a list item) so we have to cache the selection
@@ -2883,7 +2873,6 @@ Markdown = {};
         }
       }
       else {
-        image.style.backgroundPosition = button.XShift + " " + disabledYShift;
         button.onmouseover = button.onmouseout = button.onclick = function () { };
       }
     }
@@ -2902,16 +2891,14 @@ Markdown = {};
       var disabledYShift = "-20px";
       var highlightYShift = "-40px";
 
-      var buttonRow = document.createElement("ul");
+      var buttonRow = document.createElement("div");
       buttonRow.id = "wmd-button-row";
       buttonRow.className = 'wmd-button-row';
       buttonRow = buttonBar.appendChild(buttonRow);
-      var xPosition = 0;
-      var makeButton = function (id, iconClass, title, XShift, textOp) {
-        var button = document.createElement("li");
+
+      var makeButton = function (id, iconClass, title, textOp) {
+        var button = document.createElement("div");
         button.className = "wmd-button";
-        button.style.left = xPosition + "px";
-        xPosition += 25;
         var buttonSpan = document.createElement("span");
         button.id = id;
         var buttonIcon = document.createElement("i");
@@ -2919,24 +2906,23 @@ Markdown = {};
         buttonSpan.appendChild(buttonIcon);
         button.appendChild(buttonSpan);
         button.title = title;
-        button.XShift = XShift;
         if (textOp)
           button.textOp = textOp;
         setupButton(button, true);
         buttonRow.appendChild(button);
         return button;
       };
-      var makeSpacer = function (num) {
-        var spacer = document.createElement("li");
-        spacer.className = "wmd-spacer wmd-spacer" + num;
-        spacer.id = "wmd-spacer" + num;
+      var makeSpacer = function () {
+        var spacer = document.createElement("div");
+        spacer.className = "wmd-spacer";
+        spacer.id = "wmd-spacer";
         buttonRow.appendChild(spacer);
-        xPosition += 25;
       }
 
       // button font-awesome icons
       var boldIcon = "fa-bold";
       var italicIcon = "fa-italic";
+      var strikethroughIcon = "fa-strikethrough";
       var linkIcon = "fa-link";
       var quoteIcon = "fa-quote-right";
       var codeIcon = "fa-code";
@@ -2949,36 +2935,46 @@ Markdown = {};
       var redoIcon = "fa-arrow-right";
       var helpIcon = "fa-question";
 
-      buttons.bold = makeButton("wmd-bold-button", boldIcon, getString("bold"), "0px", bindCommand("doBold"));
-      buttons.italic = makeButton("wmd-italic-button", italicIcon, getString("italic"), "-20px", bindCommand("doItalic"));
-      makeSpacer(1);
-      buttons.link = makeButton("wmd-link-button", linkIcon, getString("link"), "-40px", bindCommand(function (chunk, postProcessing) {
-        return this.doLinkOrImage(chunk, postProcessing, false);
-      }));
-      buttons.quote = makeButton("wmd-quote-button", quoteIcon, getString("quote"), "-60px", bindCommand("doBlockquote"));
-      buttons.code = makeButton("wmd-code-button", codeIcon, getString("code"), "-80px", bindCommand("doCode"));
-      buttons.image = makeButton("wmd-image-button", imageIcon, getString("image"), "-100px", bindCommand(function (chunk, postProcessing) {
-        return this.doLinkOrImage(chunk, postProcessing, true);
-      }));
-      makeSpacer(2);
-      buttons.olist = makeButton("wmd-olist-button", olistIcon, getString("olist"), "-120px", bindCommand(function (chunk, postProcessing) {
-        this.doList(chunk, postProcessing, true);
-      }));
-      buttons.ulist = makeButton("wmd-ulist-button", ulistIcon, getString("ulist"), "-140px", bindCommand(function (chunk, postProcessing) {
-        this.doList(chunk, postProcessing, false);
-      }));
-      buttons.heading = makeButton("wmd-heading-button", headingIcon, getString("heading"), "-160px", bindCommand("doHeading"));
-      buttons.hr = makeButton("wmd-hr-button", hrIcon, getString("hr"), "-180px", bindCommand("doHorizontalRule"));
-      makeSpacer(3);
-      buttons.undo = makeButton("wmd-undo-button", undoIcon, getString("undo"), "-200px", null);
+      buttons.undo = makeButton("wmd-undo-button", undoIcon, getString("undo"), null);
       buttons.undo.execute = function (manager) { if (manager) manager.undo(); };
 
       var redoTitle = /win/.test(nav.platform.toLowerCase()) ?
         getString("redo") :
         getString("redomac"); // mac and other non-Windows platforms
 
-      buttons.redo = makeButton("wmd-redo-button", redoIcon, redoTitle, "-220px", null);
+      buttons.redo = makeButton("wmd-redo-button", redoIcon, redoTitle, null);
       buttons.redo.execute = function (manager) { if (manager) manager.redo(); };
+
+      makeSpacer();
+
+      buttons.heading = makeButton("wmd-heading-button", headingIcon, getString("heading"), bindCommand("doHeading"));
+      buttons.bold = makeButton("wmd-bold-button", boldIcon, getString("bold"), bindCommand("doBold"));
+      buttons.italic = makeButton("wmd-italic-button", italicIcon, getString("italic"), bindCommand("doItalic"));
+      buttons.strikethrough = makeButton("wmd-strikethrough-button", strikethroughIcon, getString("strikethrough"), bindCommand("doStrikethrough"));
+
+      makeSpacer();
+
+      buttons.link = makeButton("wmd-link-button", linkIcon, getString("link"), bindCommand(function (chunk, postProcessing) {
+        return this.doLinkOrImage(chunk, postProcessing, false);
+      }));
+      buttons.image = makeButton("wmd-image-button", imageIcon, getString("image"), bindCommand(function (chunk, postProcessing) {
+        return this.doLinkOrImage(chunk, postProcessing, true);
+      }));
+      buttons.quote = makeButton("wmd-quote-button", quoteIcon, getString("quote"), bindCommand("doBlockquote"));
+      buttons.code = makeButton("wmd-code-button", codeIcon, getString("code"), bindCommand("doCode"));
+
+      makeSpacer();
+
+      buttons.olist = makeButton("wmd-olist-button", olistIcon, getString("olist"), bindCommand(function (chunk, postProcessing) {
+        this.doList(chunk, postProcessing, true);
+      }));
+      buttons.ulist = makeButton("wmd-ulist-button", ulistIcon, getString("ulist"), bindCommand(function (chunk, postProcessing) {
+        this.doList(chunk, postProcessing, false);
+      }));
+
+      //buttons.hr = makeButton("wmd-hr-button", hrIcon, getString("hr"), bindCommand("doHorizontalRule"));
+
+
 
       if (helpOptions) {
         var helpButton = document.createElement("li");
@@ -3089,6 +3085,49 @@ Markdown = {};
 
       // Add the true markup.
       var markup = nStars <= 1 ? "*" : "**"; // shouldn't the test be = ?
+      chunk.before = chunk.before + markup;
+      chunk.after = markup + chunk.after;
+    }
+
+    return;
+  };
+
+  commandProto.doStrikethrough = function (chunk, postProcessing) {
+
+    // Get rid of whitespace and fixup newlines.
+    chunk.trimWhitespace();
+    chunk.selection = chunk.selection.replace(/\n{2,}/g, "\n");
+
+    // Look for stars before and after.  Is the chunk already marked up?
+    // note that these regex matches cannot fail
+    var starsBefore = /(~*$)/.exec(chunk.before)[0];
+    var starsAfter = /(^~*)/.exec(chunk.after)[0];
+
+    var prevStars = Math.min(starsBefore.length, starsAfter.length);
+
+    var nStars = 2;
+
+    // Remove stars if we have to since the button acts as a toggle.
+    if ((prevStars >= nStars) && (prevStars != 2 || nStars != 1)) {
+      chunk.before = chunk.before.replace(re("[~]{" + nStars + "}$", ""), "");
+      chunk.after = chunk.after.replace(re("^[~]{" + nStars + "}", ""), "");
+    } else if (!chunk.selection && starsAfter) {
+      // It's not really clear why this code is necessary.  It just moves
+      // some arbitrary stuff around.
+      chunk.after = chunk.after.replace(/^(~*)/, "");
+      chunk.before = chunk.before.replace(/(\s?)$/, "");
+      var whitespace = re.$1;
+      chunk.before = chunk.before + starsAfter + whitespace;
+    } else {
+
+      // In most cases, if you don't have any selected text and click the button
+      // you'll get a selected, marked up region with the default text inserted.
+      if (!chunk.selection && !starsAfter) {
+        chunk.selection = this.getString("strikethroughexample");
+      }
+
+      // Add the true markup.
+      var markup = "~~"; // shouldn't the test be = ?
       chunk.before = chunk.before + markup;
       chunk.after = markup + chunk.after;
     }

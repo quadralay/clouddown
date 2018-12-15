@@ -583,30 +583,6 @@ function getNextWordOffset(text, offset, isBackward) {
 
 cledit.defaultKeystrokes = [
 
-  new Keystroke(function (evt, state, editor) {
-    if ((!evt.ctrlKey && !evt.metaKey) || evt.altKey) {
-      return
-    }
-    var keyCode = evt.charCode || evt.keyCode
-    var keyCodeChar = String.fromCharCode(keyCode).toLowerCase()
-    var action
-    switch (keyCodeChar) {
-      case 'y':
-        action = 'redo'
-        break
-      case 'z':
-        action = evt.shiftKey ? 'redo' : 'undo'
-        break
-    }
-    if (action) {
-      evt.preventDefault()
-      setTimeout(function () {
-        editor.undoMgr[action]()
-      }, 10)
-      return true
-    }
-  }),
-
   new Keystroke(function (evt, state) {
     if (evt.which !== 9 /* tab */ || evt.metaKey || evt.ctrlKey) {
       return
