@@ -30,7 +30,6 @@ function CloudDownEditor(textArea, onContentChanged) {
     var input = document.createElement('pre');
     input.id = 'clouddown-input';
     input.className = 'clouddown-input';
-    input.innerText = fileContent;
 
     // preview
     var preview = document.createElement('div');
@@ -76,6 +75,7 @@ function CloudDownEditor(textArea, onContentChanged) {
     }
 
     cleditor.init({
+      content: fileContent,
       sectionHighlighter: function (section) {
         return window.Prism.highlight(section.text, prismGrammar)
       },

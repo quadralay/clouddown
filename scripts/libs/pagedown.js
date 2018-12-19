@@ -1459,23 +1459,6 @@ Markdown = {};
     help: "Markdown Editing Help"
   };
 
-
-  // -------------------------------------------------------------------
-  //  YOUR CHANGES GO HERE
-  //
-  // I've tried to localize the things you are likely to change to
-  // this area.
-  // -------------------------------------------------------------------
-
-  // The default text that appears in the dialog input box when entering
-  // links.
-  var imageDefaultText = "http://";
-  var linkDefaultText = "http://";
-
-  // -------------------------------------------------------------------
-  //  END OF YOUR CHANGES
-  // -------------------------------------------------------------------
-
   // options, if given, can have the following properties:
   //   options.helpButton = { handler: yourEventHandler }
   //   options.strings = { italicexample: "slanted text" }
@@ -3303,10 +3286,10 @@ Markdown = {};
 
       if (isImage) {
         if (!this.hooks.insertImageDialog(linkEnteredCallback))
-          ui.prompt(this.getString("imagedialog"), imageDefaultText, linkEnteredCallback);
+          ui.prompt(this.getString("imagedialog"), undefined, linkEnteredCallback);
       }
       else {
-        ui.prompt(this.getString("linkdialog"), linkDefaultText, linkEnteredCallback);
+        ui.prompt(this.getString("linkdialog"), undefined, linkEnteredCallback);
       }
       return true;
     }
